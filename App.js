@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Button, Text } from 'react-native';
+import {
+	StyleSheet, View, Button, Text, TouchableHighlight, Alert,
+	Modal, TextInput
+} from 'react-native';
 
 let initial = [
 	{ id: 14, model: "156", brand: "Alfa Romeo", type: "Car" },
@@ -14,7 +17,11 @@ export default class App extends Component {
 		tableHead: ['model', 'brand', 'type', ''],
 		vehicles: initial,
 		sortBy: "",
-		sorted: {}
+		sorted: {},
+		modalVisible: false,
+		model: '',
+		brand: '',
+		type: ''
 	}
 
 	sortCars = sortBy => {
@@ -44,7 +51,17 @@ export default class App extends Component {
 			vehicles: vehiclesCopy
 		})
 	}
+
+	setModalVisible = (visible) => {
+		this.setState({ modalVisible: visible });
+	}
+
+
+
+
+
 	render() {
+		const { modalVisible } = this.state;
 		const state = this.state;
 		console.log(state);
 		return (
@@ -67,7 +84,60 @@ export default class App extends Component {
 						</View>
 						)}
 				</View>
+
+				<View style={styles.centeredView}>
+					<Modal
+						animationType="slide"
+						transparent={true}
+						visible={modalVisible}
+						onRequestClose={() => {
+							Alert.alert("Modal has been closed.");
+						}}
+					>
+						<View style={styles.centeredView}>
+							<View style={styles.modalView}>
+								<TextInput style={styles.modalText} value={this.state.model} onChangeText={text => this.setState({ model: text })} placeholder="enter model" />
+								<TextInput style={styles.modalText} value={this.state.brand} onChangeText={text => this.setState({ brand: text })} placeholder="enter brand" />
+								<TextInput style={styles.modalText} value={this.state.type} onChangeText={text => this.setState({ type: text })} placeholder="enter type" />
+								<Button title="Add car" onPress={() => {
+									const newCar = {
+										id: Date.now(),
+										model: this.state.model,
+										brand: this.state.brand,
+										type: this.state.type
+									};
+									this.setState({
+										vehicles: [...this.state.vehicles, newCar],
+										model: '',
+										brand: '',
+										type: ''
+									})
+								}} />
+								<TouchableHighlight
+									style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+									onPress={() => {
+										this.setModalVisible(!modalVisible);
+									}}
+								>
+									<Text style={styles.textStyle}>Hide Modal</Text>
+								</TouchableHighlight>
+							</View>
+						</View>
+					</Modal>
+
+					<TouchableHighlight
+						style={styles.openButton}
+						onPress={() => {
+							this.setModalVisible(true);
+						}}
+					>
+						<Text style={styles.textStyle}>Add Car</Text>
+					</TouchableHighlight>
+				</View>
+
 			</View>
+
+
 		)
 	}
 }
@@ -81,5 +151,47 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		flexWrap: 'nowrap',
 		justifyContent: 'space-between'
+	},
+
+	centeredView: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 22
+	},
+	modalView: {
+		margin: 20,
+		backgroundColor: "white",
+		borderRadius: 20,
+		padding: 35,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 5
+	},
+	openButton: {
+		backgroundColor: "#F194FF",
+		borderRadius: 20,
+		padding: 10,
+		elevation: 2
+	},
+	textStyle: {
+		color: "white",
+		fontWeight: "bold",
+		textAlign: "center"
+	},
+	modalText: {
+		marginBottom: 15,
+		textAlign: "center",
+		height: 40,
+		width: 150,
+		borderColor:
+			'gray',
+		borderWidth: 1
 	}
 });
