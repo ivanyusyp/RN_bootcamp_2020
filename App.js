@@ -18,11 +18,10 @@ export default class App extends Component {
 	}
 
 	sortCars = sortBy => {
-
 		if (!this.state.sorted[sortBy]) {
 			this.setState(
 				{
-					vehicles: initial.sort((a, b) => a[sortBy] !== b[sortBy] ? a[sortBy] < b[sortBy] ? -1 : 1 : 0),
+					vehicles: this.state.vehicles.sort((a, b) => a[sortBy] !== b[sortBy] ? a[sortBy] < b[sortBy] ? -1 : 1 : 0),
 					sorted: { ...this.state.sorted, [sortBy]: true }
 				}
 			)
@@ -30,7 +29,7 @@ export default class App extends Component {
 		else if (this.state.sorted[sortBy] === true) {
 			this.setState(
 				{
-					vehicles: initial.sort((a, b) => a[sortBy] !== b[sortBy] ? a[sortBy] < b[sortBy] ? 1 : -1 : 0),
+					vehicles: this.state.vehicles.sort((a, b) => a[sortBy] !== b[sortBy] ? a[sortBy] < b[sortBy] ? 1 : -1 : 0),
 					sorted: { ...this.state.sorted, [sortBy]: false }
 				}
 			)
@@ -38,9 +37,13 @@ export default class App extends Component {
 	}
 
 	deleteCars = id => {
-
+		const findIndex = this.state.vehicles.findIndex(vehicle => id === vehicle.id);
+		const vehiclesCopy = [...this.state.vehicles];
+		vehiclesCopy.splice(findIndex, 1);
+		this.setState({
+			vehicles: vehiclesCopy
+		})
 	}
-
 	render() {
 		const state = this.state;
 		console.log(state);
@@ -58,7 +61,9 @@ export default class App extends Component {
 							<Text>{vehicle.model}</Text>
 							<Text>{vehicle.brand}</Text>
 							<Text>{vehicle.type}</Text>
-							<Button title="x" />
+							<Button title="x"
+								onPress={() => this.deleteCars(vehicle.id)}
+							/>
 						</View>
 						)}
 				</View>
