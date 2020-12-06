@@ -16,7 +16,6 @@ export default class App extends Component {
 	state = {
 		tableHead: ['model', 'brand', 'type', ''],
 		vehicles: initial,
-		sortBy: "",
 		sorted: {},
 		modalVisible: false,
 		model: '',
@@ -61,19 +60,18 @@ export default class App extends Component {
 
 
 	render() {
-		const { modalVisible } = this.state;
-		const state = this.state;
-		console.log(state);
+
+		const { modalVisible, tableHead, vehicles, model, brand, type } = this.state;
 		return (
 			<View style={styles.container}>
 				<View>
 					<View style={styles.row}>
-						{state.tableHead.map(
+						{tableHead.map(
 							cell => <Text onPress={() => this.sortCars(cell)}>{cell}</Text>
 						)}
 					</View>
 
-					{state.vehicles.
+					{vehicles.
 						map(vehicle => <View style={styles.row}>
 							<Text>{vehicle.model}</Text>
 							<Text>{vehicle.brand}</Text>
@@ -96,18 +94,18 @@ export default class App extends Component {
 					>
 						<View style={styles.centeredView}>
 							<View style={styles.modalView}>
-								<TextInput style={styles.modalText} value={this.state.model} onChangeText={text => this.setState({ model: text })} placeholder="enter model" />
-								<TextInput style={styles.modalText} value={this.state.brand} onChangeText={text => this.setState({ brand: text })} placeholder="enter brand" />
-								<TextInput style={styles.modalText} value={this.state.type} onChangeText={text => this.setState({ type: text })} placeholder="enter type" />
+								<TextInput style={styles.modalText} value={model} onChangeText={text => this.setState({ model: text })} placeholder="enter model" />
+								<TextInput style={styles.modalText} value={brand} onChangeText={text => this.setState({ brand: text })} placeholder="enter brand" />
+								<TextInput style={styles.modalText} value={type} onChangeText={text => this.setState({ type: text })} placeholder="enter type" />
 								<Button title="Add car" onPress={() => {
 									const newCar = {
 										id: Date.now(),
-										model: this.state.model,
-										brand: this.state.brand,
-										type: this.state.type
+										model,
+										brand,
+										type
 									};
 									this.setState({
-										vehicles: [...this.state.vehicles, newCar],
+										vehicles: [...vehicles, newCar],
 										model: '',
 										brand: '',
 										type: ''
