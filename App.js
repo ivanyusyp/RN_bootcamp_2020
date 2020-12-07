@@ -55,24 +55,19 @@ export default class App extends Component {
 		this.setState({ modalVisible: visible });
 	}
 
-
-
-
-
 	render() {
-
 		const { modalVisible, tableHead, vehicles, model, brand, type } = this.state;
 		return (
 			<View style={styles.container}>
 				<View>
 					<View style={styles.row}>
 						{tableHead.map(
-							cell => <Text onPress={() => this.sortCars(cell)}>{cell}</Text>
+							cell => <Text key={cell} onPress={() => this.sortCars(cell)}>{cell}</Text>
 						)}
 					</View>
 
 					{vehicles.
-						map(vehicle => <View style={styles.row}>
+						map(vehicle => <View key={vehicle.id} style={styles.row}>
 							<Text>{vehicle.model}</Text>
 							<Text>{vehicle.brand}</Text>
 							<Text>{vehicle.type}</Text>
@@ -94,30 +89,45 @@ export default class App extends Component {
 					>
 						<View style={styles.centeredView}>
 							<View style={styles.modalView}>
-								<TextInput style={styles.modalText} value={model} onChangeText={text => this.setState({ model: text })} placeholder="enter model" />
-								<TextInput style={styles.modalText} value={brand} onChangeText={text => this.setState({ brand: text })} placeholder="enter brand" />
-								<TextInput style={styles.modalText} value={type} onChangeText={text => this.setState({ type: text })} placeholder="enter type" />
-								<Button title="Add car" onPress={() => {
-									const newCar = {
-										id: Date.now(),
-										model,
-										brand,
-										type
-									};
-									this.setState({
-										vehicles: [...vehicles, newCar],
-										model: '',
-										brand: '',
-										type: ''
-									})
-								}} />
+								<View>
+									<TextInput style={styles.modalText} value={model} onChangeText={text => this.setState({ model: text.trim() })} placeholder="enter model" />
+									{(model.length < 3) && <Text style={styles.errorValidation}>Vehicle name must be at least 3 characters</Text>}
+								</View>
+								<View>
+									<TextInput style={styles.modalText} value={brand} onChangeText={text => this.setState({ brand: text })} placeholder="enter brand" />
+									{(model.length < 3) && <Text style={styles.errorValidation}>Vehicle brend must be at least 3 characters</Text>}
+								</View>
+								<View>
+									<TextInput style={styles.modalText} value={type} onChangeText={text => this.setState({ type: text })} placeholder="enter type" />
+									{(model.length < 3) && <Text style={styles.errorValidation}>Vehicle type must be at least 3 characters</Text>}
+								</View>
+								<View>
+									<Button style={styles.addButton} title="Add car" onPress={() => {
+										const newCar = {
+											id: Date.now(),
+											model,
+											brand,
+											type
+										};
+										(model.length < 3)
+											? !newCar
+											: this.setState({
+												vehicles: [...vehicles, newCar],
+												model: '',
+												brand: '',
+												type: ''
+											})
+									}} />
+
+								</View>
+
 								<TouchableHighlight
 									style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
 									onPress={() => {
 										this.setModalVisible(!modalVisible);
 									}}
 								>
-									<Text style={styles.textStyle}>Hide Modal</Text>
+									<Text>Close</Text>
 								</TouchableHighlight>
 							</View>
 						</View>
@@ -133,7 +143,7 @@ export default class App extends Component {
 					</TouchableHighlight>
 				</View>
 
-			</View>
+			</View >
 
 
 		)
@@ -170,26 +180,39 @@ const styles = StyleSheet.create({
 		},
 		shadowOpacity: 0.25,
 		shadowRadius: 3.84,
-		elevation: 5
+		elevation: 5,
+		position: 'relative'
 	},
 	openButton: {
-		backgroundColor: "#F194FF",
+		backgroundColor: "green",
 		borderRadius: 20,
 		padding: 10,
-		elevation: 2
+		elevation: 2,
+
 	},
 	textStyle: {
 		color: "white",
 		fontWeight: "bold",
-		textAlign: "center"
+		textAlign: "center",
+		backgroundColor: 'green'
 	},
 	modalText: {
 		marginBottom: 15,
 		textAlign: "center",
 		height: 40,
-		width: 150,
+		width: 200,
 		borderColor:
 			'gray',
 		borderWidth: 1
-	}
+	},
+	errorValidation: {
+		color: 'red',
+		marginTop: -15,
+		fontSize: 12
+	},
+	addButton: {
+		marginBottom: 20,
+		padding: 2,
+		backgroundColor: 'green'
+	},
 });
